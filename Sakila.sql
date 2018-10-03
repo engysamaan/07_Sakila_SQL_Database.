@@ -25,7 +25,8 @@
     -- 2c. Find all actors whose last names contain the letters LI. This time, order the rows by last name and first name, in that order:
     SELECT last_name , first_name
     FROM actor
-    WHERE last_name LIKE '%li%';
+    WHERE last_name LIKE '%li%'
+    ORDER BY last_name ASC;
         
     -- 2d. Using IN, display the country_id and country columns of the following countries: Afghanistan, Bangladesh, and China:
     SELECT  country_id
@@ -87,12 +88,11 @@
     
     /*6b. Use JOIN to display the total amount rung up by each staff member in August of 2005. 
     Use tables staff and payment.*/    
-    SELECT s.last_name /*p.payment_date*/, sum(p.amount)
+    SELECT s.last_name , sum(p.amount)
     FROM staff s
     JOIN  payment p ON s.staff_id = p.staff_id
     WHERE p.payment_date BETWEEN '2005-08-01' and '2005-08-31'
-    Group by s.staff_id
-    -- HAVING p.payment_date = '2005-08-01' OR '2005-08-31';
+    Group by s.staff_id;
 
 
    /*6c. List each film and the number of actors who are listed for that film.
@@ -100,7 +100,7 @@
     SELECT  f.film_id, f.title, count(fa.actor_id) as 'number of actors'
     FROM film f
     INNER JOIN film_actor fa  on f.film_id = fa.film_id
-    GROUP BY fa.film_id,f.film_id ;
+    GROUP BY fa.film_id;
     
 
     -- 6d. How many copies of the film Hunchback Impossible exist in the inventory system?
@@ -193,18 +193,23 @@ Identify all movies categorized as family films.*/
         )
     );
     
--- 7e. Display the most frequently rented movies in descending order.
-    SELECT title, rental_duration
-    FROM film
-    ORDER BY rental_duration  DESC;
+-- 7e. Display the most frequently rented movies in descending order.    
+    SELECT f.title as "Movies", COUNT(r.rental_id) as "Number of rentals"
+    FROM film f 
+    JOIN inventory i ON f.film_id = i.film_id
+    JOIN rental r ON i.inventory_id = r.inventory_id 
+    GROUP BY 1
+    ORDER BY 2 DESC;
 
 
  -- 7f. Write a query to display how much business, in dollars, each store brought in.
+    select * from rental
     SELECT s.store_id, SUM(p.amount) 
     FROM store s
     JOIN staff st ON s.store_id = st.store_id
-    JOIN payment p ON st.staff_id = p.staff_id
-    GROUP BY 1;
+    JOIN rental r ON st.staff_id = r.staff_id
+    JOIN payment p ON r.rental_id = p.rental_id
+    GROUP BY 1 ;
     
 -- 7g. Write a query to display for each store its store ID, city, and country.
  /*   SELECT store_id
@@ -234,7 +239,7 @@ Identify all movies categorized as family films.*/
 /*7h. List the top five genres in gross revenue in descending order. 
 (Hint: you may need to use the following tables: 
 category, film_category, inventory, payment, and rental.)*/
-    SELECT   c.name as GENERS, sum( p.amount )
+    SELECT  c.name as GENERS, sum( p.amount )
     FROM category c
     JOIN film_category fc ON c.category_id = fc.category_id
     JOIN inventory i ON fc.film_id = i.film_id
