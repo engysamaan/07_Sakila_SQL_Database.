@@ -1,14 +1,6 @@
 # SQL_Challenge
 
-Homework Assignment
-
-
-Installation Instructions
-
-
-Refer to the installation guide to install the necessary files.
-
-
+https://github.com/engysamaan/SQL_Challenge/blob/master/Sakila.sql
 
 Instructions
 
